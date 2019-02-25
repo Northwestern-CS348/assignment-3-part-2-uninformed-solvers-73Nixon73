@@ -182,19 +182,19 @@ class Puzzle8Game(GameMaster):
             if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos1 pos1)"))!=False:
                 protuple[0][0]=tilenum
             if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos2 pos1)"))!=False:
-                protuple[1][0]=tilenum
-            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos3 pos1)"))!=False:
-                protuple[2][0]=tilenum
-            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos1 pos2)"))!=False:
                 protuple[0][1]=tilenum
+            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos3 pos1)"))!=False:
+                protuple[0][2]=tilenum
+            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos1 pos2)"))!=False:
+                protuple[1][0]=tilenum
             if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos2 pos2)"))!=False:
                 protuple[1][1]=tilenum
             if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos3 pos2)"))!=False:
-                protuple[2][1]=tilenum
-            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos1 pos3)"))!=False:
-                protuple[0][2]=tilenum
-            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos2 pos3)"))!=False:
                 protuple[1][2]=tilenum
+            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos1 pos3)"))!=False:
+                protuple[2][0]=tilenum
+            if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos2 pos3)"))!=False:
+                protuple[2][1]=tilenum
             if self.kb.kb_ask(parse_input("fact: (coordinate "+tile+" pos3 pos3)"))!=False:
                 protuple[2][2]=tilenum
         """
@@ -234,21 +234,14 @@ class Puzzle8Game(GameMaster):
         endposy=termlist[4].term.element
         #breakpoint()
         #retract old facts
-        self.kb.kb_retract(parse_input("fact: (xpos "+tile+" "+startposx+")"))
+        self.kb.kb_retract(parse_input("fact: (coordinate "+tile+" "+startposx+" "+startposy+")"))
         #breakpoint()
-        self.kb.kb_retract(parse_input("fact: (ypos "+tile+" "+startposy+")"))
-        #breakpoint()
-        self.kb.kb_retract(parse_input("fact: (xpos empty "+endposx+")"))
-        #breakpoint()
-        self.kb.kb_retract(parse_input("fact: (ypos empty "+endposy+")"))
+        self.kb.kb_retract(parse_input("fact: (coordinate empty "+endposx+" "+endposy+")"))
         #assert new ones
-        self.kb.kb_assert(parse_input("fact: (xpos "+tile+" "+endposx+")"))
+        self.kb.kb_assert(parse_input("fact: (coordinate "+tile+" "+endposx+" "+endposy+")"))
         #breakpoint()
-        self.kb.kb_assert(parse_input("fact: (ypos "+tile+" "+endposy+")"))
+        self.kb.kb_assert(parse_input("fact: (coordinate empty "+endposx+" "+endposy+")"))
         #breakpoint()
-        self.kb.kb_assert(parse_input("fact: (xpos empty "+startposx+")"))
-        #breakpoint()
-        self.kb.kb_assert(parse_input("fact: (ypos empty "+startposy+")"))
         return
         
 

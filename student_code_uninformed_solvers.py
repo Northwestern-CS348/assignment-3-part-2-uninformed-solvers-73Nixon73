@@ -28,6 +28,7 @@ class SolverDFS(UninformedSolver):
         return False
 """
     def solveOneStep(self):
+        return True
         """
         Go to the next state that has not been explored. If a
         game state leads to more than one unexplored game states,
@@ -116,6 +117,7 @@ class SolverBFS(UninformedSolver):
         return
         
     def solveOneStep(self):
+        return True
         ###Note to self: Plan is to use the children as something to work with, change current states as the main way we do things
         ### Student code goes here
          #Step 1
