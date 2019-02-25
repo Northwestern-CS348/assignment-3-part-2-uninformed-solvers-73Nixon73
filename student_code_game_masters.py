@@ -65,6 +65,7 @@ class TowerOfHanoiGame(GameMaster):
         Returns:
             None
         """
+        
         ###taking the terms
         disklist = ["disk1","disk2","disk3","disk4","disk5"]
         
@@ -72,58 +73,57 @@ class TowerOfHanoiGame(GameMaster):
         movedisk=termlist[0].term.element
         startpeg=termlist[1].term.element
         endpeg=termlist[2].term.element
-
+        if self.kb.kb_ask(parse_input("fact: (movable "+movedisk+" "+startpeg+" "+endpeg+")"))==False:
+            return
         ###fact construction
         factpeg="fact: ("
 
         ##Note to self: Biggest problem so far is how to search for a fact to retract (i.e. taking off the peg's current top)
         ##Also how do I make facts in a less awful way.
         ### If destination is empty
-        emptygoal = factpeg+"empty "+endpeg+")"
-        emptygoalparsed = parse_input(emptygoal)
-        emptygoaltest = self.kb.kb_ask(emptygoalparsed)
+        emptygoaltest=self.kb.kb_ask(parse_input("fact: (empty "+endpeg+")"))
         
-        if emptygoaltest==False:
+        if emptygoaltest != False:
             #retract the target being empty, the current peg being on top, and the current peg having the disk
-            disklocation=factpeg+"on "+movedisk+" "+startpeg+")"
-            self.kb.kb_retract(parse_input(disklocation))
-            disklocation=factpeg+"top "+movedisk+" "+startpeg+")"
-            self.kb.kb_retract(parse_input(disklocation))
-            self.kb.kb_retract(emptygoalparsed)
-            #assert the disk being on the new peg, it being on the new peg, and a new top for the starting peg
+            self.kb.kb_retract(parse_input(factpeg+"on "+movedisk+" "+startpeg+")"))
+            self.kb.kb_retract(parse_input(factpeg+"top "+movedisk+" "+startpeg+")"))
+            self.kb.kb_retract(parse_input("fact: (empty "+endpeg+")"))
+            #assert the disk being on the new peg, it being top the new peg, and a new top for the starting peg
             self.kb.kb_assert(parse_input(factpeg+"on "+movedisk+" "+endpeg+")"))
             self.kb.kb_assert(parse_input(factpeg+"top "+movedisk+" "+endpeg+")"))
             changed=False
             for disk in disklist:
                 ask=self.kb.kb_ask(parse_input(factpeg+"on "+disk+" "+startpeg+")"))
-                if ask!=False & changed==False:
+                if ask != False:
                     self.kb.kb_assert(parse_input(factpeg+"top "+disk+" "+startpeg+")"))
-                    changed=True
+                    return
+                    
             if changed==False:
                 self.kb.kb_assert(parse_input(factpeg+"empty "+startpeg+")"))
-
+            return
+            
         else:
             #retract the starting peg having the disk, it being on top, and the receiving peg having another top
+            #breakpoint()
             disklocation=factpeg+"on "+movedisk+" "+startpeg+")"
-            self.kb.kb_retract(parse_input(disklocation))
-            disklocation=factpeg+"top "+movedisk+" "+startpeg+")"
-            self.kb.kb_retract(parse_input(disklocation))
+            self.kb.kb_retract(parse_input("fact: (on "+movedisk+" "+startpeg+")"))
+            disklocation="fact: (top "+movedisk+" "+startpeg+")"
+            self.kb.kb_retract(parse_input("fact: (top "+movedisk+" "+startpeg+")"))
             changed=False
             for disk in disklist:
                 ask=self.kb.kb_ask(parse_input(factpeg+"top "+disk+" "+endpeg+")"))
-                if ask!=False & changed==False:
+                if ask:
                     self.kb.kb_retract(parse_input(factpeg+"top "+disk+" "+endpeg+")"))
-                    changed=True
-
+                    break
             #assert the starting peg having a new top, the new disk being on top of the new peg, and the disk being on the new peg
             self.kb.kb_assert(parse_input(factpeg+"on "+movedisk+" "+endpeg+")"))
             self.kb.kb_assert(parse_input(factpeg+"top "+movedisk+" "+endpeg+")"))
             changed=False
             for disk in disklist:
                 ask=self.kb.kb_ask(parse_input(factpeg+"on "+disk+" "+startpeg+")"))
-                if ask!=False & changed==False:
+                if ask!=False:
                     self.kb.kb_assert(parse_input(factpeg+"top "+disk+" "+startpeg+")"))
-                    changed=True
+                    return
             if changed==False:
                 self.kb.kb_assert(parse_input(factpeg+"empty "+startpeg+")"))
         return
@@ -232,16 +232,12 @@ class Puzzle8Game(GameMaster):
         startposy=termlist[2].term.element
         endposx=termlist[3].term.element
         endposy=termlist[4].term.element
-        #breakpoint()
-        #retract old facts
+         #retract old facts
         self.kb.kb_retract(parse_input("fact: (coordinate "+tile+" "+startposx+" "+startposy+")"))
-        #breakpoint()
         self.kb.kb_retract(parse_input("fact: (coordinate empty "+endposx+" "+endposy+")"))
         #assert new ones
         self.kb.kb_assert(parse_input("fact: (coordinate "+tile+" "+endposx+" "+endposy+")"))
-        #breakpoint()
         self.kb.kb_assert(parse_input("fact: (coordinate empty "+endposx+" "+endposy+")"))
-        #breakpoint()
         return
         
 
