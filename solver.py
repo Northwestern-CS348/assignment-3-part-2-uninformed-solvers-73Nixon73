@@ -18,7 +18,7 @@ class UninformedSolver(object):
         self.gm = gameMaster
         self.visited = dict()
         self.currentState = GameState(self.gm.getGameState(), 0, None)
-        self.visited[self.currentState] = True
+        self.visited[self.currentState] = False
         self.victoryCondition = victoryCondition
 
     def solveOneStep(self):
